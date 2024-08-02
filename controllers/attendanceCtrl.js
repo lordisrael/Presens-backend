@@ -82,7 +82,7 @@ const takeAttendance = asyncHandler(async (req, res) => {
   res.status(StatusCodes.OK).json({ status: "Success", data: attendance });
 })
 
-const getAllAttendance = asyncHandler(async (req, res) => {
+const getAllattendance = asyncHandler(async (req, res) => {
   const attendance = await Attendance.find().sort({ dateCreated: -1 });
   const formattedAttendance = attendance.map((record) => {
     const formattedDate = moment(record.dateCreated).format("MMMM Do");
