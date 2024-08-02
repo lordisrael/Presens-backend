@@ -84,7 +84,14 @@ const takeAttendance = asyncHandler(async (req, res) => {
 
 const getAllattendance = asyncHandler(async(req, res) => {
     const attendance = await Attendance.find().sort({ dateCreated: -1 });
-    res.status(StatusCodes.OK).json({ status: "Success", data: attendance });
+    const formattedDate = moment(attendance.dateCreated).format("MMMM Do");
+    res.status(StatusCodes.OK).json({
+      status: "Success",
+      data: {
+        ...attendance.toObject(),
+        dateCreated: formattedDate,
+      },
+    });
 })
 
 const getStudentAttendance = asyncHandler(async(req, res) => {
