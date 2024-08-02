@@ -82,17 +82,34 @@ const takeAttendance = asyncHandler(async (req, res) => {
   res.status(StatusCodes.OK).json({ status: "Success", data: attendance });
 })
 
-const getAllattendance = asyncHandler(async(req, res) => {
-    const attendance = await Attendance.find().sort({ dateCreated: -1 });
-    const formattedDate = moment(attendance.dateCreated).format("MMMM Do");
-    res.status(StatusCodes.OK).json({
-      status: "Success",
-      data: {
-        ...attendance.toObject(),
-        dateCreated: formattedDate,
-      },
-    });
-})
+const getAllAttendance = asyncHandler(async (req, res) => {
+  const attendance = await Attendance.find().sort({ dateCreated: -1 });
+  const formattedAttendance = attendance.map((record) => {
+    const formattedDate = moment(record.dateCreated).format("MMMM Do");
+    return {
+      ...record.toObject(),
+      dateCreated: formattedDate,
+    };
+  });
+
+  res.status(StatusCodes.OK).json({
+    status: "Success",
+    data: formattedAttendance,
+  });
+});
+
+
+// const getAllattendance = asyncHandler(async(req, res) => {
+//     const attendance = await Attendance.find().sort({ dateCreated: -1 });
+//     const formattedDate = moment(attendance.dateCreated).format("MMMM Do");
+//     res.status(StatusCodes.OK).json({
+//       status: "Success",
+//       data: {
+//         ...attendance.toObject(),
+//         dateCreated: formattedDate,
+//       },
+//     });
+// })
 
 const getStudentAttendance = asyncHandler(async(req, res) => {
     const { id: attendanceId } = req.params;
