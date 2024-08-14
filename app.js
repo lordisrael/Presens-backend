@@ -3,6 +3,11 @@ require("dotenv").config();
 
 const app = express()
 
+const helmet = require("helmet");
+const cors = require("cors");
+const rateLimiter = require("express-rate-limit");
+
+
 const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/lecturerRoute");
 const studentRoute = require("./routes/studentRoute")
@@ -10,9 +15,20 @@ const attendanceRoute = require("./routes/attendanceRoute")
 
 const dbConnect = require("./config/db");
 
+app.set("trust proxy", 1);
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+  })
+);
+
 const notFoundMiddleware = require("./middleware/not-Found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
+
+app.use(helmet());
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
