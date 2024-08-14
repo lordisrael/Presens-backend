@@ -25,11 +25,14 @@ const registerLecturer = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
+  // Trim email and password to remove any trailing spaces
   const { email, password } = req.body;
-  const user = await Lecturer.findOne({ email });
-  if (user && (await user.comparePassword(password))) {
+  const trimmedEmail = email.trim();
+  const trimmedPassword = password.trim();
+  const user = await Lecturer.findOne({ email: trimmedEmail });
+  if (user && (await user.comparePassword(trimmedPassword))) {
     const refreshToken = createRefreshJWT(user._id);
-    /* const updateUser =*/ await Lecturer.findByIdAndUpdate(
+    await Lecturer.findByIdAndUpdate(
       user._id,
       {
         refreshToken: refreshToken,
@@ -40,12 +43,6 @@ const login = asyncHandler(async (req, res) => {
       httpOnly: true,
       maxAge: 72 * 60 * 60 * 1000,
     });
-    // _   id:user._id,
-    //     firstname: user.firstname,
-    //     secondname: user.secondname,
-    //     email: user.email,
-    //     mobile: user.email,
-    //     token: createJWT(user._id, user.firstname)
     res.status(StatusCodes.OK).json({
       status: "Success",
       token: createJWT(user._id, user.firstname),
@@ -53,6 +50,7 @@ const login = asyncHandler(async (req, res) => {
   } else {
     throw new UnauthenticatedError("Invalid credentials");
   }
+
 });
 
 module.exports = {
